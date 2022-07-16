@@ -1,5 +1,9 @@
 // +y is going down, following canvas
 
+if (typeof(POSITION_STUFF) === undefined) {
+  console.error('expect positionStuff.js');
+}
+
 Cube = function(initPos) {
   // face values
   this.faceVal = {
@@ -21,6 +25,25 @@ Cube.prototype.SetPos = function(x, y) {
   this.pos.x = x;
   this.pos.y = y;
 };
+
+Cube.prototype.RollNormal = function(direction) {
+  switch(direction) {
+    case EAST:
+      this.RollRight();
+      return;
+    case NORTH:
+      this.RollBack();
+      return;
+    case WEST:
+      this.RollLeft();
+      return;
+    case SOUTH:
+      this.RollFront();
+      return;
+    default:
+      console.error('bad direction value');
+  }
+}
 
 Cube.prototype.RollLeft = function() {
   let x = this.faceVal.U;
@@ -62,3 +85,6 @@ Cube.prototype.RollBack = function() {
   this.pos.y -= 1;
 }
 
+
+Cube.prototype.FallToDeath = function() {
+};

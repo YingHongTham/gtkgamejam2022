@@ -9,14 +9,16 @@ data = {
     x: 5, y: 5,
   },
   boardDim: { // probably redundant
-    width: 12, height: 5,
+    width: 13, height: 7,
   },
   board: [
-    "       #### ",
-    "  ###  #### ",
-    "    ### ### ",
-    "    # ##### ",
-    "    #  #####"
+    "             ",
+    "       ####  ",
+    "  ###  ####  ",
+    "    ### ###  ",
+    "    # #####  ",
+    "    #  ##### ",
+    "             ",
   ],
 };
 
@@ -37,6 +39,10 @@ function drawBoard() {
         cubeW * i + 4,
         cubeH * j + 12);
     }
+  }
+
+  if (level.state === DEATH) {
+    ctx.fillText('Dead', 100, 100);
   }
 }
 
@@ -61,28 +67,39 @@ function drawCube() {
 
 
 document.addEventListener('keydown', (ev) => {
+  if (level.state === DEATH) {
+    return;
+  }
   const name = ev.key;
   //const code = ev.code;
   //console.log(`Key press: ${name}, code: ${code}`);
 
+  let direction = 0;
   switch(name) {
     case 'ArrowLeft':
-      cube.RollLeft();
+      direction = WEST;
       break;
     case 'ArrowRight':
-      cube.RollRight();
+      direction = EAST;
       break;
     case 'ArrowUp':
-      cube.RollBack();
+      direction = NORTH;
       break;
     case 'ArrowDown':
-      cube.RollFront();
+      direction = SOUTH;
       break;
+  }
+  if (direction in [EAST, NORTH, WEST, SOUTH]) {
+    level.Move(direction);
   }
 }, false);
 
 
+let continueAnimate = true;
+
 function animate() {
+  if (!continueAnimate)
+    return;
   setTimeout(() => {
     requestAnimationFrame(animate);
     ctx.beginPath();
@@ -91,7 +108,16 @@ function animate() {
     //ctx.clearRect(0,0,canvas.width,canvas.height);
     drawBoard();
     drawCube();
-  }, 500);
+  }, 0);
 };
 
-animate();
+function startAnim() {
+  continueAnimate = true;
+  animate();
+}
+
+function pauseAnim() {
+  continueAnimate = false;
+}
+
+startAnim();
