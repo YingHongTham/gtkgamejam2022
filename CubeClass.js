@@ -1,4 +1,6 @@
-Cube = function() {
+// +y is going down, following canvas
+
+Cube = function(initPos) {
   // face values
   this.faceVal = {
     U: 1, // up (top)
@@ -10,9 +12,14 @@ Cube = function() {
   }
 
   this.pos = {
-    x: 0,
-    y: 0,
+    x: initPos.x,
+    y: initPos.y,
   };
+};
+
+Cube.prototype.SetPos = function(x, y) {
+  this.pos.x = x;
+  this.pos.y = y;
 };
 
 Cube.prototype.RollLeft = function() {
@@ -42,7 +49,7 @@ Cube.prototype.RollFront = function() {
   this.faceVal.D = this.faceVal.F;
   this.faceVal.F = x;
 
-  this.pos.y -= 1;
+  this.pos.y += 1;
 }
 
 Cube.prototype.RollBack = function() {
@@ -52,6 +59,6 @@ Cube.prototype.RollBack = function() {
   this.faceVal.D = this.faceVal.B;
   this.faceVal.B = x;
 
-  this.pos.y += 1;
+  this.pos.y -= 1;
 }
 
