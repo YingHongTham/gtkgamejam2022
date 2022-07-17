@@ -15,17 +15,15 @@ data = {
     "             ",
     "       ####  ",
     "  ###  ####  ",
-    "    ### ###  ",
+    " ##########  ",
     "    # #####  ",
-    "    #  ##### ",
+    "    ######## ",
     "             ",
   ],
 };
 
-const level = new Level(data);
+const level = new Level(data, ctx);
 const cube = level.cube;
-
-console.log(level.board);
 
 const cubeW = 15;
 const cubeH = 15;
@@ -65,50 +63,55 @@ function drawCube() {
     cubeH * cube.pos.y + 12);
 }
 
+let curTime = 0;
 
 document.addEventListener('keydown', (ev) => {
   if (level.state === DEATH) {
     return;
   }
   const name = ev.key;
-  //const code = ev.code;
-  //console.log(`Key press: ${name}, code: ${code}`);
+  const code = ev.code;
+  console.log(`Key press: ${name}, code: ${code}`);
 
   let direction = 0;
-  switch(name) {
-    case 'ArrowLeft':
-      direction = WEST;
-      break;
-    case 'ArrowRight':
-      direction = EAST;
-      break;
-    case 'ArrowUp':
-      direction = NORTH;
-      break;
-    case 'ArrowDown':
-      direction = SOUTH;
-      break;
+  if (name === 'ArrowLeft') {
+    direction = WEST;
+  }
+  else if (name === 'ArrowRight') {
+    direction = EAST;
+  }
+  else if (name === 'ArrowUp') {
+    direction = NORTH;
+  }
+  else if (name === 'ArrowDown') {
+    direction = SOUTH;
+  }
+  else {
+    direction = -1;
   }
   if (direction in [EAST, NORTH, WEST, SOUTH]) {
-    level.Move(direction);
+    level.Move(direction, curTime);
   }
 }, false);
 
 
-let continueAnimate = true;
+let continueAnimate = false;;
 
-function animate() {
+function animate(time) {
   if (!continueAnimate)
     return;
-  setTimeout(() => {
-    requestAnimationFrame(animate);
-    ctx.beginPath();
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    //ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawBoard();
-    drawCube();
-  }, 0);
+  requestAnimationFrame(animate);
+
+  curTime = time;
+
+  // clear canvas
+  ctx.beginPath();
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  //ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawBoard();
+  cube.DrawCube(time);
 };
 
 function startAnim() {
@@ -121,3 +124,12 @@ function pauseAnim() {
 }
 
 startAnim();
+
+
+
+
+const playAnimBtn = document.getElementById('playAnim');
+const pauseAnimBtn = document.getElementById('pauseAnim');
+
+playAnimBtn.onclick = () => { startAnim(); };
+pauseAnimBtn.onclick = () => { pauseAnim(); };

@@ -32,8 +32,13 @@ const DEATH = 1;
  *  (blank): fall off and die
  * #: normal board position
  */
-Level = function(data) {
-  this.cube = new Cube(data.cubeInitPos);
+Level = function(data, ctx) {
+  this.ctx = ctx; // context of canvas on which to draw
+
+  this.cubePos = data.cubeInitPos;
+
+  // only for visualization!
+  this.cube = new Cube(data.cubeInitPos, ctx);
   this.boardDim = data.boardDim;
   this.board = Array(data.boardDim.width);
   for (let i = 0; i < data.boardDim.width; ++i) {
@@ -48,10 +53,11 @@ Level = function(data) {
   this.state = ALIVE;
 };
 
-Level.prototype.Move = function(direction) {
+Level.prototype.Move = function(direction, curTime) {
   const numSteps = this.cube.faceVal.U;
   for (let i = 0; i < numSteps; ++i) {
-    let state = this.MoveOneStep(direction);
+    let state = this.MoveOneStep(direction, curTime);
+    console.log(this.cubePos);
     if (state === DEATH) {
       this.state = DEATH;
       return;
@@ -59,16 +65,18 @@ Level.prototype.Move = function(direction) {
   }
 };
 
-Level.prototype.MoveOneStep = function(direction) {
-  const newPos = ADD_VECTORS(this.cube.pos, UNIT_VECTOR[direction]);
+Level.prototype.MoveOneStep = function(direction, curTime) {
+  const newPos = ADD_VECTORS(this.cubePos, UNIT_VECTOR[direction]);
   if (this.board[newPos.x][newPos.y] === ' ') {
-    this.cube.RollNormal(direction);
-    //this.cube.FallToDeath();
-    //this.Death();
+    //this.cube.RollNormal(direction);
+    this.cube.RollWithAnimation(direction, curTime);
+    this.cubePos = newPos;
     return DEATH;
   }
   if (this.board[newPos.x][newPos.y] === '#') {
-    this.cube.RollNormal(direction);
+    this.cube.RollWithAnimation(direction, curTime);
+    this.cubePos = newPos;
+    //this.cube.RollNormal(direction);
     return ALIVE;
   }
 };
